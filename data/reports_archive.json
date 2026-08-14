@@ -1,5 +1,19 @@
 [
   {
+    "id": 1786707311,
+    "summary": "The Weekly Review Pulse indicates that users are generally satisfied with the app's performance and ease of use. However, there are some concerns regarding reliability and infrastructure issues, AI model failures, and resource constraints. Users have reported issues with syncing, slow responses, and difficulties with certain features. Despite these challenges, users appreciate the app's simplicity, transparency, and helpful customer support.",
+    "themes": "[{\"name\": \"Reliability and Performance Issues\", \"percentage\": 60}, {\"name\": \"AI Model Failures\", \"percentage\": 20}, {\"name\": \"Infrastructure and Resource Constraints\", \"percentage\": 20}]",
+    "quotes": "[\"I love the app! But now downloads are faster and more stable, which is a really nice improvement.\", \"The app is very helpful, but In mutual funds there is no top up option like I can invest in all my different funds in a single transaction\", \"I've had an excellent experience using INDmoney. The app is user-friendly, reliable, and makes investing simple\"]",
+    "action_items": "[\"Improve the app's infrastructure to reduce syncing issues and slow responses\", \"Enhance the mutual funds feature to include a top-up option for multiple investments in a single transaction\", \"Invest in AI model development to reduce failures and improve overall app performance\"]",
+    "fee_scenarios": "[{\"type\": \"exit_load\", \"scenario_name\": \"Mutual Fund Exit Load\", \"explanation_bullets\": [\"A mutual fund exit load is a fee charged to investors when they redeem or withdraw their investments from a mutual fund.\", \"The exit load is typically a percentage of the redeeming amount and is deducted from the proceeds.\", \"The primary purpose of an exit load is to discourage investors from making frequent withdrawals, thereby helping the fund manager to maintain a stable portfolio.\", \"Exit loads are usually applicable for a specific period, ranging from a few days to a year or more, depending on the fund's policies.\", \"The exit load percentage and duration vary across different mutual funds and schemes.\", \"The details of the exit load, including the percentage and applicable period, are usually mentioned in the fund's offer document or prospectus.\"], \"source_links\": [\"https://www.indmoney.com/mutual-funds/sbi-psu-direct-growth-3465\", \"https://www.indmoney.com/mutual-funds/aditya-birla-sun-life-psu-equity-fund-direct-growth-1005251\"], \"last_checked\": \"2026-08-14\"}]",
+    "email_subject": "Weekly INDMoney Voice of Customer Pulse",
+    "email_body": "The Weekly Review Pulse indicates that users are generally satisfied with the app's performance and ease of use. However, there are some concerns regarding reliability and infrastructure issues, AI model failures, and resource constraints. Users have reported issues with syncing, slow responses, and difficulties with certain features. Despite these challenges, users appreciate the app's simplicity, transparency, and helpful customer support.",
+    "json_path": null,
+    "pdf_path": null,
+    "created_at": "2026-08-14T11:35:11.160403",
+    "review_count": 231
+  },
+  {
     "id": 1786704381,
     "summary": "AI Synthesis Failed. Both Groq and Gemini limits exceeded.",
     "themes": "[{\"name\": \"AI Error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kja0124ef9qt39db67jncvz9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 100000, Requested 424. Please try again in 6m6.336s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}\", \"percentage\": 100}]",
