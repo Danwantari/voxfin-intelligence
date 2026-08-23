@@ -2,8 +2,8 @@ import './globals.css'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'INDMoney Pulse | Review Intelligence',
-  description: 'Automated weekly pulse for product and engineering teams.',
+  title: 'VoxFin Intelligence | Voice-of-Customer Platform',
+  description: 'AI-powered voice-of-customer intelligence for fintech product and engineering teams.',
 }
 
 export default function RootLayout({ children }) {
@@ -20,9 +20,9 @@ export default function RootLayout({ children }) {
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center gap-2 group mr-4">
                 <div className="w-8 h-8 bg-[#0066CC] rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:scale-105 transition-transform">
-                  I
+                  V
                 </div>
-                <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Pulse</span>
+                <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">VoxFin</span>
               </Link>
               <div className="hidden lg:flex items-center gap-1">
                 <Link href="/reviews" className="px-3 py-2 text-xs font-medium text-slate-600 hover:text-[#0066CC] transition-colors">INDMoney Insights</Link>
@@ -38,10 +38,10 @@ export default function RootLayout({ children }) {
                 <div className="w-1 h-1 bg-slate-400 rounded-full animate-pulse"></div>
                 Production
               </div>
-              <button className="w-8 h-8 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+              <button className="h-8 px-1 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
                 <span className="sr-only">Profile</span>
-                <div className="w-6 h-6 rounded-full bg-[#0066CC]/20 text-[#0066CC] text-[10px] font-bold flex items-center justify-center">
-                  SK
+                <div className="h-6 px-2.5 rounded-full bg-[#0066CC]/20 text-[#0066CC] text-[10px] font-bold flex items-center justify-center whitespace-nowrap">
+                  Danwantari
                 </div>
               </button>
             </div>

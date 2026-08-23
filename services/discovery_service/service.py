@@ -2,15 +2,16 @@ import os
 import time
 import json
 import requests
-from groq import Groq
+import anthropic
 from tenacity import retry, stop_after_attempt, wait_exponential
+from services.anthropic_client import CLAUDE_MODEL
 
 class DiscoveryService:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         self.gemini_key = os.environ.get("GEMINI_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = CLAUDE_MODEL
 
     @retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=4, max=10))
     def discover_signals(self, reviews: list) -> list:
@@ -24,17 +25,19 @@ class DiscoveryService:
         Return a simple list of signals.
         """
         
-        # Try Groq First
+        # Try Claude First
         if self.client:
             try:
-                response = self.client.chat.completions.create(
+                response = self.client.messages.create(
+                    model=self.model,
+                    max_tokens=1024,
                     messages=[{"role": "user", "content": prompt}],
-                    model=self.model
                 )
-                signals = response.choices[0].message.content.strip().split('\n')
+                text = "".join(b.text for b in response.content if b.type == "text")
+                signals = text.strip().split('\n')
                 return [s.strip('- ').strip() for s in signals if s.strip()]
             except Exception as e:
-                print(f"Groq failed, trying Gemini fallback: {e}")
+                print(f"Claude failed, trying Gemini fallback: {e}")
                 if "rate_limit" not in str(e).lower() and "429" not in str(e):
                     # If it's NOT a rate limit, don't fallback yet, let retry handle it
                     if "client" not in str(e).lower(): raise e
@@ -57,4 +60,4 @@ class DiscoveryService:
             except Exception as e:
                 print(f"Gemini also failed: {e}")
         
-        return ["AI Synthesis Failed. Both Groq (Rate Limited) and Gemini (Fallback) failed."]
+        return ["AI Synthesis Failed. Both Claude (Rate Limited) and Gemini (Fallback) failed."]

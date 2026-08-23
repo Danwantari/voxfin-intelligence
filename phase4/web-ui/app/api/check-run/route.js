@@ -4,7 +4,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const runId = searchParams.get('run_id');
   const githubToken = process.env.GITHUB_TOKEN;
-  const githubRepo = process.env.GITHUB_REPO || "saikichnit/INDMoney_Reviews_Weekly_Pulse-";
+  const githubRepo = process.env.GITHUB_REPO || "danwantari/voxfin-intelligence";
 
   if (!runId || !githubToken) {
     return NextResponse.json({ status: 'unknown' });

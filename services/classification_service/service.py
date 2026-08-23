@@ -1,16 +1,17 @@
 import os
-from groq import Groq
+import anthropic
 import json
+from services.anthropic_client import CLAUDE_MODEL, chat_json
 
 class ClassificationService:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = CLAUDE_MODEL
 
     def classify_themes(self, signals: list) -> dict:
-        if not self.client: 
-            return {"themes": [{"name": "AI Client Initialization Failed. GROQ_API_KEY is missing from GitHub Secrets.", "percentage": 100}]}
+        if not self.client:
+            return {"themes": [{"name": "AI Client Initialization Failed. ANTHROPIC_API_KEY is missing from GitHub Secrets.", "percentage": 100}]}
         
         prompt = f"""
         Group these raw signals into 3-5 high-level actionable themes for a product team.
@@ -22,12 +23,7 @@ class ClassificationService:
         """
         
         try:
-            response = self.client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model=self.model,
-                response_format={"type": "json_object"}
-            )
-            return json.loads(response.choices[0].message.content)
+            return chat_json(self.client, messages=[{"role": "user", "content": prompt}], max_tokens=1536)
         except Exception as e:
             print(f"Classification error: {e}")
             return {"themes": [{"name": f"AI Error: {str(e)}", "percentage": 100}]}

@@ -1,13 +1,15 @@
-# INDMoney Weekly Review Pulse - Phase 1 (MVP)
+# VoxFin Intelligence - Phase 1 (MVP)
 
-A production-grade intelligence system that converts app reviews into actionable weekly pulses.
+A production-grade Voice-of-Customer intelligence system that converts fintech app reviews into actionable weekly pulses, powered by Claude, with automated Jira ticketing and stakeholder email delivery.
+
+📖 **[Full product walkthrough with screenshots, and the engineering journal of every bug found & fixed](docs/WALKTHROUGH.md)**
 
 ## Repository Structure
 ```text
 /phase1
   /ingestion      # Normalization (Title removal, deduplication)
   /preprocessing  # Cleaning (PII removal, Word-count & Language filtering)
-  /llm_pipeline   # Groq orchestration (Themes, quotes, action items)
+  /llm_pipeline   # Claude orchestration (Themes, quotes, action items)
   /output         # Stored reports
   main.py         # Entry point
   config.yaml     # Configuration
@@ -27,24 +29,30 @@ To enable automated email delivery, follow these steps to generate a secure **Ap
 ### **Environment Configuration (.env)**
 Ensure your `.env` file contains the following:
 ```env
-GROQ_API_KEY=your_groq_key
+ANTHROPIC_API_KEY=your_anthropic_key
 GEMINI_API_KEY=your_gemini_key
 
 # Email Settings
-EMAIL_USER=your_email@gmail.com
+EMAIL_SENDER=your_email@gmail.com
 EMAIL_PASSWORD=your_16_char_app_password
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
+
+# Jira Settings
+JIRA_SITE_URL=yourcompany.atlassian.net
+JIRA_USER_EMAIL=your_email@example.com
+JIRA_API_TOKEN=your_jira_token
+JIRA_PROJECT_KEY=PROD
 ```
 
 ### **Key Services**
 - **Ingestion Service**: Handles local data loading and raw storage.
 - **Preprocessing Service**: Enforces high-signal filtering and PII scrubbing.
-- **LLM Service**: Orchestrates Groq analysis with representative sampling.
+- **LLM Service**: Orchestrates Claude (Haiku 4.5) analysis with representative sampling.
 - **Report & Email Services**: Handles artifact finalization and distribution.
 
 ### **Running Phase 2**
-1. **Navigate to root**: `cd INDMoney_Reviews_Weekly_Pulse-`
+1. **Navigate to root**: `cd voxfin-intelligence`
 2. **Launch Server**:
    ```bash
    python3 phase2/main.py
@@ -65,7 +73,7 @@ python3 -m pytest phase2/tests/test_production.py
 - **PII Policy**: Strict zero-PII leakage via automated scrubbing.
 
 ## Setup
-1. **API Key**: `export GROQ_API_KEY='your_key_here'`
+1. **API Key**: `export ANTHROPIC_API_KEY='your_key_here'`
 2. **Data**: Place CSV/JSON reviews in `data/raw/`.
 3. **Run**: 
    ```bash

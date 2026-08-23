@@ -1,15 +1,15 @@
-# INDMoney Product Intelligence Platform: System Architecture
+# VoxFin Intelligence: System Architecture
 
-This document defines the unified, production-grade architecture for the INDMoney **"Product Intelligence Platform"**. It governs the end-to-end transformation of massive-scale App Store and Google Play feedback into actionable strategic insights and real-time engineering triage.
+This document defines the unified, production-grade architecture for **VoxFin Intelligence**, a Voice-of-Customer platform demonstrated here against INDMoney's public app reviews. It governs the end-to-end transformation of massive-scale App Store and Google Play feedback into actionable strategic insights and real-time engineering triage.
 
 ---
 
 ## 1. Core Objective
 The platform automates the lifecycle of user feedback, converting **10,000+ reviews** into a **Decision Intelligence Hub** used by Product, Engineering, and Growth teams to:
-*   **Real-time Triage**: Directly assign critical feedback to PMs (Sai, Jeeth, Ram, Tech).
+*   **Real-time Triage**: Directly assign critical feedback to PMs (Danwantari, Jeeth, Ram, Tech).
 *   **Analytics Hub**: Monitor high-fidelity sentiment, rating distributions, and NPS signals.
 *   **Trend Intelligence**: Track multi-quarter product health over a **1-12 month strategic window**.
-*   **Executive Reporting**: Synthesize **Monthly, Quarterly, and Annual** stakeholder notes and action plans using Groq (Llama 3).
+*   **Executive Reporting**: Synthesize **Monthly, Quarterly, and Annual** stakeholder notes and action plans using Claude (Haiku 4.5).
 
 ---
 
@@ -28,7 +28,7 @@ graph TD
     end
     
     subgraph Intelligence_Engine
-        RPS --> LLM[Groq Orchestrator: Llama 3 70B]
+        RPS --> LLM[Claude Orchestrator: Haiku 4.5]
         RS --> LEC[Local Evaluation: Rule-based Classifier]
     end
     
@@ -46,7 +46,7 @@ graph TD
 2.  **Identity Layer**: Real-name attribution for public reviewers, with high-fidelity unique handle generation (e.g., `Google User #D93B`) for anonymous signals.
 3.  **Triage Layer**: Content-based deduplication (Content-Hash + Platform) and functional classification (App Crash, UX Issues, Charges & Fees, etc.).
 4.  **Analytics Layer**: Multi-dimensional aggregation of rating distributions, sentiment momentum, and NPS-style indicators.
-5.  **Synthesis Layer**: AI-driven theme extraction and executive summary generation using the Groq LLM pipeline.
+5.  **Synthesis Layer**: AI-driven theme extraction and executive summary generation using the Claude LLM pipeline.
 6.  **Interface Layer**: Premium **Light Theme** dashboard with precision drill-downs from aggregate KPIs to raw feedback evidence.
 7.  **Education Layer**: Proactive financial literacy integration. Anchors strategic pulses to real-world INDMoney product benchmarks (e.g., SBI PSU Direct Growth, ICICI Infrastructure) by providing fact-checked fee explainers (Exit Load, Brokerage) accompanied by verified source links.
 
@@ -76,7 +76,7 @@ graph TD
 | `platform` | TEXT | Source platform (android/ios) |
 | `app_version` | TEXT | Version-specific signal tracking |
 | `content_hash` | TEXT | UNIQUE key for deduplication (text + platform) |
-| `assigned_to` | TEXT | Ownership tracking (Sai, Jeeth, Ram, Tech, Tech Team) |
+| `assigned_to` | TEXT | Ownership tracking (Danwantari, Jeeth, Ram, Tech, Tech Team) |
 
 ---
 
@@ -98,7 +98,7 @@ graph TD
 
 | Category Bucket | Default PM | Team Alignment |
 | :--- | :--- | :--- |
-| Onboarding / KYC | Sai | Growth & Conversion |
+| Onboarding / KYC | Danwantari | Growth & Conversion |
 | UI / UX / App Flow | Jeeth | Platform Experience |
 | Payments / Payouts | Ram | Fintech & Operations |
 | Performance / Security| Tech | Core Infrastructure |
@@ -119,7 +119,7 @@ The platform features an automated **Pulse Generation Engine** that synthesizes 
 ## 10. Phase-wise Development Roadmap
 The system has evolved through five strategic phases:
 *   **Phase 1: Ingestion Foundation**: Basic scraper setup for Android/iOS and data normalization.
-*   **Phase 2: Intelligence Pipeline**: Integration of Groq (Llama 3) for theme extraction and executive summaries.
+*   **Phase 2: Intelligence Pipeline**: Integration of Claude (Haiku 4.5) for theme extraction and executive summaries.
 *   **Phase 3: Stakeholder Reporting**: Automated email delivery and MCP-driven Google Doc archiving.
 *   **Phase 4: Decision Dashboard**: Migration to Next.js with the professional Unified Intelligence Hub.
 *   **Phase 5: Scale & Parity**: Expansion to 360-day historical window and real-user identity attribution.

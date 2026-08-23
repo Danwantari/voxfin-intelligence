@@ -1,12 +1,13 @@
 import os
 import json
-from groq import Groq
+import anthropic
+from services.anthropic_client import CLAUDE_MODEL, chat_json
 
 class LLMService:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = CLAUDE_MODEL
 
     def _chunk_reviews(self, reviews: list, chunk_size: int = 200):
         for i in range(0, len(reviews), chunk_size):
@@ -14,7 +15,7 @@ class LLMService:
 
     def analyze_reviews(self, reviews: list) -> dict:
         if not self.client:
-            return {"error": "GROQ_API_KEY missing"}
+            return {"error": "ANTHROPIC_API_KEY missing"}
 
         # 1. Map Phase: Extract themes from all batches
         all_batch_themes = []
@@ -33,12 +34,7 @@ class LLMService:
             """
             
             try:
-                response = self.client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt}],
-                    model=self.model,
-                    response_format={"type": "json_object"}
-                )
-                res = json.loads(response.choices[0].message.content)
+                res = chat_json(self.client, messages=[{"role": "user", "content": prompt}], max_tokens=1024)
                 all_batch_themes.extend(res.get('themes', []))
                 all_batch_quotes.extend(res.get('quotes', []))
             except Exception as e:
@@ -67,14 +63,11 @@ class LLMService:
         """
 
         try:
-            response = self.client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": reduction_prompt}
-                ],
-                model=self.model,
-                response_format={"type": "json_object"}
+            return chat_json(
+                self.client,
+                messages=[{"role": "user", "content": reduction_prompt}],
+                system=system_prompt,
+                max_tokens=2048,
             )
-            return json.loads(response.choices[0].message.content)
         except Exception as e:
             return {"error": f"Synthesis failed: {str(e)}"}

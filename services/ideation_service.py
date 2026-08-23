@@ -1,12 +1,13 @@
 import os
 import json
-from groq import Groq
+import anthropic
 from storage.db import DatabaseManager
+from services.anthropic_client import CLAUDE_MODEL, chat_json
 
 class IdeationService:
     def __init__(self):
         self.db = DatabaseManager()
-        self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+        self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
     def generate_product_ideas(self):
         """
@@ -33,13 +34,8 @@ class IdeationService:
         """
 
         try:
-            chat_completion = self.client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model="llama3-70b-8192",
-                response_format={"type": "json_object"}
-            )
-            response = json.loads(chat_completion.choices[0].message.content)
-            ideas = response.get('ideas', [])
+            response = chat_json(self.client, messages=[{"role": "user", "content": prompt}], max_tokens=1536)
+            ideas = response.get('ideas', response if isinstance(response, list) else [])
             
             # Save to DB
             with self.db._get_connection() as conn:

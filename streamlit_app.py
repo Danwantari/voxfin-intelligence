@@ -11,9 +11,9 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-st.set_page_config(page_title="INDPlus Controller", page_icon="💎", layout="wide")
+st.set_page_config(page_title="VoxFin Controller", page_icon="💎", layout="wide")
 
-st.title("💎 INDPlus Strategic Intelligence")
+st.title("💎 VoxFin Strategic Intelligence")
 st.caption("Backend Management Console | v10.0 (Clean Reset)")
 
 # Diagnostic Import Area

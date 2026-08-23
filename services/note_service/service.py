@@ -1,15 +1,16 @@
 import os
 import json
 import requests
-from groq import Groq
+import anthropic
 from tenacity import retry, stop_after_attempt, wait_exponential
+from services.anthropic_client import CLAUDE_MODEL, chat_json
 
 class NoteService:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         self.gemini_key = os.environ.get("GEMINI_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = CLAUDE_MODEL
 
     @retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=4, max=10))
     def generate_note(self, themes: list, reviews: list) -> dict:
@@ -32,17 +33,12 @@ class NoteService:
         }}
         """
         
-        # Try Groq First
+        # Try Claude First
         if self.client:
             try:
-                response = self.client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt}],
-                    model=self.model,
-                    response_format={"type": "json_object"}
-                )
-                return json.loads(response.choices[0].message.content)
+                return chat_json(self.client, messages=[{"role": "user", "content": prompt}], max_tokens=1536)
             except Exception as e:
-                print(f"Groq note generation failed, trying Gemini: {e}")
+                print(f"Claude note generation failed, trying Gemini: {e}")
                 if "rate_limit" not in str(e).lower() and "429" not in str(e):
                     if "client" not in str(e).lower(): raise e
 
@@ -71,7 +67,7 @@ class NoteService:
                 print(f"Gemini note generation failed: {e}")
 
         return {
-            "summary": "AI Synthesis Failed. Both Groq and Gemini limits exceeded.",
+            "summary": "AI Synthesis Failed. Both Claude and Gemini limits exceeded.",
             "quotes": [],
             "action_items": []
         }

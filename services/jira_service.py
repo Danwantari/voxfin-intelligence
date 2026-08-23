@@ -9,8 +9,8 @@ class JiraService:
     def __init__(self):
         # In production, these would come from environment variables
         self.api_token = os.getenv("JIRA_API_TOKEN")
-        self.site_url = os.getenv("JIRA_SITE_URL", "indmoney.atlassian.net")
-        self.user_email = os.getenv("JIRA_USER_EMAIL", "chsk.nitw@gmail.com")
+        self.site_url = os.getenv("JIRA_SITE_URL", "danwantari09.atlassian.net")
+        self.user_email = os.getenv("JIRA_USER_EMAIL", "danwantari09@gmail.com")
         self.base_url = f"https://{self.site_url}/rest/api/3"
         self.is_mock = self.api_token is None or self.api_token == ""
 
@@ -34,7 +34,7 @@ class JiraService:
                 return f"[SIMULATED] {mock_id}"
 
             # Production API Call
-            project_key = os.getenv("JIRA_PROJECT_KEY", "PROD")
+            project_key = os.getenv("JIRA_PROJECT_KEY", "SCRUM")
             
             payload = {
                 "fields": {

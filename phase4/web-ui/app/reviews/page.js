@@ -25,7 +25,7 @@ function ReviewsContent() {
   const [pulseDate, setPulseDate] = useState(null)
 
   const pmOptions = [
-    { name: "Sai", team: "Wealth" },
+    { name: "Danwantari", team: "Wealth" },
     { name: "Jeeth", team: "Stocks" },
     { name: "Ram", team: "Credit" },
     { name: "Tech", team: "Platform" },
@@ -40,12 +40,20 @@ function ReviewsContent() {
     setLoading(true)
     try {
       // Primary: Use Raw GitHub URL (High-bandwidth, No Rate Limit)
-      const RAW_URL = "https://raw.githubusercontent.com/saikichnit/INDMoney_Reviews_Weekly_Pulse-/main/data/latest_pulse.json";
-      const res = await fetch(RAW_URL, {
-        cache: 'no-store'
-      });
-      const json = await res.json();
-      
+      const RAW_URL = "https://raw.githubusercontent.com/danwantari/voxfin-intelligence/main/data/latest_pulse.json";
+      let json;
+      try {
+        const res = await fetch(RAW_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`GitHub source returned ${res.status}`);
+        json = await res.json();
+      } catch (primaryErr) {
+        // GitHub source not reachable yet (e.g. repo not pushed) — use the local data file
+        console.warn("GitHub source unavailable, using local data/latest_pulse.json", primaryErr)
+        const localRes = await fetch('/api/local-pulse', { cache: 'no-store' });
+        if (!localRes.ok) throw new Error('No local pulse data available');
+        json = await localRes.json();
+      }
+
       // Transform GitHub Bridge format to Dashboard format
       const payload = json.payload || {};
       const transformedData = {
@@ -107,8 +115,12 @@ function ReviewsContent() {
           fetch(`http://localhost:8001/api/reviews?platform=${platform}&time_range=${timeRange}${category ? `&category=${encodeURIComponent(category)}` : ''}`),
           fetch(`http://localhost:8001/api/reviews/metrics?platform=${platform}&time_range=${timeRange}${category ? `&category=${encodeURIComponent(category)}` : ''}`)
         ])
-        setReviews(await rRes.json())
-        setMetrics(await mRes.json())
+        const rJson = await rRes.json()
+        const mJson = await mRes.json()
+        // Only trust the fallback if it actually looks like our own review payload —
+        // localhost:8001 can be occupied by an unrelated local service.
+        if (Array.isArray(rJson)) setReviews(rJson)
+        if (mJson && typeof mJson.total_reviews !== 'undefined') setMetrics(mJson)
       } catch (e) {}
     } finally {
       setLoading(false)

@@ -14,7 +14,7 @@ export async function POST(request, { params }) {
 
   // 2. VERCEL / PRODUCTION CHECK: Trigger GitHub Action instead of local python3
   const githubToken = process.env.GITHUB_TOKEN;
-  const githubRepo = process.env.GITHUB_REPO || 'saikichnit/INDMoney_Reviews_Weekly_Pulse-';
+  const githubRepo = process.env.GITHUB_REPO || 'danwantari/voxfin-intelligence';
 
   if (process.env.VERCEL) {
     if (!githubToken) {

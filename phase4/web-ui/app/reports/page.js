@@ -47,7 +47,14 @@ export default function ReportsAndAutomation() {
     try {
       const res = await fetch('/api/fetch-archive')
       const data = await res.json()
-      if (Array.isArray(data)) setReports(data)
+      if (Array.isArray(data) && data.length > 0) {
+        setReports(data)
+      } else {
+        // GitHub source not reachable yet (e.g. repo not pushed) — use the local archive file
+        const localRes = await fetch('/api/local-archive')
+        const localData = await localRes.json()
+        if (Array.isArray(localData)) setReports(localData)
+      }
     } catch (err) { console.error(err) }
     setLoading(false)
   }
@@ -103,7 +110,7 @@ export default function ReportsAndAutomation() {
       } else {
         // [MODIFIED] No silent fallback. If fast path fails, we need to know WHY.
         console.error("Fast Synthesis Failed:", data.error || "Unknown error")
-        alert(`Synthesis failed: ${data.message || 'Please check your GROQ_API_KEY on Vercel.'}`)
+        alert(`Synthesis failed: ${data.message || 'Please check your ANTHROPIC_API_KEY on Vercel.'}`)
         setGenerating(false)
       }
     } catch (err) { 

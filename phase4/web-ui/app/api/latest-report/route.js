@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const githubRepo = process.env.GITHUB_REPO || "saikichnit/INDMoney_Reviews_Weekly_Pulse-";
+  const githubRepo = process.env.GITHUB_REPO || "danwantari/voxfin-intelligence";
   const githubToken = process.env.GITHUB_TOKEN;
 
   try {

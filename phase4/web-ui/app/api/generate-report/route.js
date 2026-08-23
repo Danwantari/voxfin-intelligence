@@ -13,7 +13,7 @@ export async function POST(request) {
   
   // [NEW] GitHub Action Trigger for Vercel/Production
   const githubToken = process.env.GITHUB_TOKEN;
-  const githubRepo = process.env.GITHUB_REPO || 'saikichnit/INDMoney_Reviews_Weekly_Pulse-';
+  const githubRepo = process.env.GITHUB_REPO || 'danwantari/voxfin-intelligence';
 
   // If we are on Vercel, we MUST use GitHub Actions. Local python3 won't work.
   if (process.env.VERCEL) {

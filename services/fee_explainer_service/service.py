@@ -1,15 +1,16 @@
 import os
 import json
-from groq import Groq
+import anthropic
 from datetime import datetime
 from dotenv import load_dotenv
+from services.anthropic_client import CLAUDE_MODEL, chat_json
 
 class FeeExplainerService:
     def __init__(self, api_key: str = None):
         load_dotenv()
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = CLAUDE_MODEL
         
         # Scenario Reference Data (Restricted to provided links)
         self.official_links = [
@@ -48,13 +49,8 @@ class FeeExplainerService:
         """
         
         try:
-            response = self.client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model=self.model,
-                response_format={"type": "json_object"}
-            )
-            result = json.loads(response.choices[0].message.content)
-            
+            result = chat_json(self.client, messages=[{"role": "user", "content": prompt}], max_tokens=1024)
+
             # Force Strict Compliance
             result["type"] = fee_type
             result["scenario_name"] = scenario["name"]

@@ -1,16 +1,17 @@
 import os
+import re
 import json
-from groq import Groq
+import anthropic
 
 class GroqOrchestrator:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
-        self.client = Groq(api_key=self.api_key) if self.api_key else None
-        self.model = "llama-3.3-70b-versatile"
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
+        self.model = "claude-haiku-4-5"
 
     def generate_report(self, reviews: list) -> dict:
         if not self.client:
-            return {"error": "GROQ_API_KEY not configured."}
+            return {"error": "ANTHROPIC_API_KEY not configured."}
 
         review_context = "\n".join([
             f"- [Rating: {r['rating']}] {r['review_text']}"
@@ -32,14 +33,15 @@ class GroqOrchestrator:
         user_prompt = f"REVIEWS:\n{review_context}\n\nGenerate report JSON:"
 
         try:
-            response = self.client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
+            response = self.client.messages.create(
                 model=self.model,
-                response_format={"type": "json_object"}
+                max_tokens=2048,
+                system=system_prompt,
+                messages=[{"role": "user", "content": user_prompt}],
             )
-            return json.loads(response.choices[0].message.content)
+            text = "".join(b.text for b in response.content if b.type == "text").strip()
+            if text.startswith("```"):
+                text = re.sub(r"^```(json)?", "", text).rsplit("```", 1)[0].strip()
+            return json.loads(text)
         except Exception as e:
             return {"error": str(e)}

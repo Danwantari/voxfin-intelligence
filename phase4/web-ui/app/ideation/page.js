@@ -10,9 +10,13 @@ export default function IdeationPage() {
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/ideas`)
       .then(res => res.json())
       .then(data => {
-        setIdeas(data)
-        setLoading(false)
+        setIdeas(Array.isArray(data) ? data : (data.ideas || []))
       })
+      .catch(err => {
+        console.error("Ideation backend unavailable:", err)
+        setIdeas([])
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const handleGenerate = async () => {
@@ -20,7 +24,8 @@ export default function IdeationPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/generate-ideas`, { method: 'POST' })
       const data = await res.json()
-      setIdeas([...data.ideas, ...ideas])
+      const newIdeas = Array.isArray(data.ideas) ? data.ideas : []
+      setIdeas([...newIdeas, ...ideas])
     } catch (err) {
       console.error(err)
     } finally {

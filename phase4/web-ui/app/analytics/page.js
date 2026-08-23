@@ -16,12 +16,20 @@ export default function UnifiedIntelligencePage() {
     setLoading(true)
     try {
       // Primary: Use Raw GitHub URL (High-bandwidth, No Rate Limit)
-      const RAW_URL = "https://raw.githubusercontent.com/saikichnit/INDMoney_Reviews_Weekly_Pulse-/main/data/latest_pulse.json";
-      const res = await fetch(RAW_URL, {
-        cache: 'no-store'
-      });
-      const json = await res.json();
-      
+      const RAW_URL = "https://raw.githubusercontent.com/danwantari/voxfin-intelligence/main/data/latest_pulse.json";
+      let json;
+      try {
+        const res = await fetch(RAW_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`GitHub source returned ${res.status}`);
+        json = await res.json();
+      } catch (primaryErr) {
+        // GitHub source not reachable yet (e.g. repo not pushed) — use the local data file
+        console.warn("GitHub source unavailable, using local data/latest_pulse.json", primaryErr)
+        const localRes = await fetch('/api/local-pulse', { cache: 'no-store' });
+        if (!localRes.ok) throw new Error('No local pulse data available');
+        json = await localRes.json();
+      }
+
       // 1. Transform & Filter Data Locally for full reactivity
       const reviews = json.reviews || [];
       const parseDate = (d) => {
@@ -157,7 +165,9 @@ export default function UnifiedIntelligencePage() {
       try {
         const res = await fetch(`http://localhost:8001/api/analytics?time_range=${timeRange}`)
         const json = await res.json()
-        setData(json)
+        // Only trust the fallback if it actually looks like our own analytics payload —
+        // localhost:8001 can be occupied by an unrelated local service.
+        if (json && json.summary) setData(json)
       } catch (e) {}
     } finally {
       setLoading(false)
@@ -173,6 +183,17 @@ export default function UnifiedIntelligencePage() {
   }
 
   if (loading && !data) return <div className="p-20 text-center animate-pulse text-slate-400 font-medium text-sm">Loading Intelligence Hub...</div>
+
+  if (!loading && !data) return (
+    <div className="max-w-2xl mx-auto py-24 text-center space-y-3">
+      <p className="text-slate-900 font-bold">No pulse data available yet</p>
+      <p className="text-slate-400 text-sm">
+        Trigger a run from the Streamlit controller (localhost:8501), or push this repo to GitHub so
+        <code className="mx-1 px-1.5 py-0.5 bg-slate-100 rounded text-[11px]">data/latest_pulse.json</code>
+        is reachable at raw.githubusercontent.com.
+      </p>
+    </div>
+  )
 
   return (
     <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-500 pb-20 px-6">

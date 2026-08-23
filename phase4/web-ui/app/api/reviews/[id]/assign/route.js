@@ -9,9 +9,9 @@ export async function POST(request, { params }) {
     
     // Check if Jira credentials are provided in Vercel Environment Variables
     const apiToken = process.env.JIRA_API_TOKEN;
-    const siteUrl = process.env.JIRA_SITE_URL || 'indmoney.atlassian.net';
-    const userEmail = process.env.JIRA_USER_EMAIL || 'chsk.nitw@gmail.com';
-    const projectKey = process.env.JIRA_PROJECT_KEY || 'PROD';
+    const siteUrl = process.env.JIRA_SITE_URL || 'danwantari09.atlassian.net';
+    const userEmail = process.env.JIRA_USER_EMAIL || 'danwantari09@gmail.com';
+    const projectKey = process.env.JIRA_PROJECT_KEY || 'SCRUM';
     
     if (apiToken && apiToken !== "mock_token_here") {
        // --- LIVE JIRA INTEGRATION ---

@@ -68,7 +68,7 @@ export default function ReportPreview() {
 
       // 2. Fallback: Try GitHub Archive (Serverless mode)
       try {
-        const ARCHIVE_URL = "https://raw.githubusercontent.com/saikichnit/INDMoney_Reviews_Weekly_Pulse-/main/data/reports_archive.json";
+        const ARCHIVE_URL = "https://raw.githubusercontent.com/danwantari/voxfin-intelligence/main/data/reports_archive.json";
         const res = await fetch(ARCHIVE_URL, { cache: 'no-store' });
         const archive = await res.json();
         const found = archive.find(r => String(r.id) === String(id));
@@ -88,6 +88,25 @@ export default function ReportPreview() {
       } catch (err) {
         console.error("Remote fetch methods failed", err)
       }
+
+      // 2b. GitHub source not reachable yet (e.g. repo not pushed) — use the local archive file
+      try {
+        const res = await fetch('/api/local-archive');
+        const archive = await res.json();
+        const found = Array.isArray(archive) ? archive.find(r => String(r.id) === String(id)) : null;
+        if (found) {
+          const parsed = { ...found };
+          if (typeof parsed.themes === 'string') parsed.themes = JSON.parse(parsed.themes);
+          if (typeof parsed.quotes === 'string') parsed.quotes = JSON.parse(parsed.quotes);
+          if (typeof parsed.action_items === 'string') parsed.action_items = JSON.parse(parsed.action_items);
+          if (typeof parsed.fee_scenarios === 'string') parsed.fee_scenarios = JSON.parse(parsed.fee_scenarios || '[]');
+
+          setReport(parsed)
+          setEditedSummary(parsed.summary || '')
+          setLoading(false)
+          return
+        }
+      } catch (err) {}
 
       // 3. FINAL FALLBACK: Check local archive (for reports still syncing to GitHub)
       try {
@@ -237,7 +256,7 @@ export default function ReportPreview() {
 
              <div className="grid grid-cols-1 gap-4">
                 {report.themes?.map((theme, i) => (
-                  <div key={i} className="card-premium p-6 hover:translate-x-1 transition-transform cursor-default">
+                  <div key={i} className="card-premium p-6 bg-white border-slate-200 shadow-sm hover:translate-x-1 transition-transform cursor-default">
                     <div className="flex items-center justify-between mb-2">
                        <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shadow-sm">
